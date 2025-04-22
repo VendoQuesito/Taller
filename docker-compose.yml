@@ -8,3 +8,41 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     ports:
     - "27017:27017"
+  mariadb:
+        image: mariadb:latest
+        container_name: mariadb-users
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: mydatabase
+            MYSQL_USER: user
+            MYSQL_PASSWORD: userpassword
+        ports:
+            - "3306:3306"
+  phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: phpmyadmin-users
+        environment:
+            PMA_HOST: mariadb
+            PMA_USER: root
+            PMA_PASSWORD: rootpassword
+        ports:
+        - "8080:80"
+  postgres:
+    image: postgres:latest
+    container_name: postgres-auth
+    environment:
+      POSTGRES_DB: auth-db
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: authpass
+    ports:
+      - "5432:5432"
+  mariadb-bill:
+    image: mariadb:latest
+    container_name: mariadb-bill
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bill-db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: factpass
+    ports:
+      - "3307:3306"
