@@ -14,6 +14,14 @@ const VideoSchema = new Schema(
       genre: { type: String, required: true },
       available: { type: Boolean, default: true },
     },
+    {
+      toJSON: {
+        transform(doc, ret) {
+          delete ret._id;   // Oculta _id
+          delete ret.__v;   // Oculta __v
+        },
+      },
+    }
   );
   
   const Video = model("Video", VideoSchema);
