@@ -1,6 +1,6 @@
 const Videos = require("../../../database/models/videosModel");
 const catchAsync = require("../../../utils/catchAsync");
-
+const AppError = require("../../../utils/appError");
 //const getAllVideo = (req, res) =>{
 //    res.status(200).json(videos);
 //};
@@ -24,6 +24,12 @@ const getVideoById = catchAsync(async (req, res, next) => {
 
 const createVideo = catchAsync(async (req, res, next) => {
     const { title } = req.body;
+    if (!req.user) {
+      return next(new AppError("Debe iniciar sesion", 401));
+    }
+    if (req.user.rol !== "Administrador") {
+      return next(new AppError("No autorizado", 403));
+    }
     if (!title) {
       throw new AppError("Se requiere titulo", 400);
     }
@@ -41,6 +47,20 @@ const createVideo = catchAsync(async (req, res, next) => {
 });
 
 const updateVideo = catchAsync(async (req, res, next) => {
+  if (!req.user) {
+    return next(new AppError("Debe iniciar sesion", 401));
+  }
+  if (req.user.rol !== "Administrador") {
+    return next(new AppError("No autorizado", 403));
+  }
+  const allowedFields = ["title", "description", "genre"];
+  const updateData = {};
+
+  for (let field of allowedFields) {
+    if (field in req.body) {
+      updateData[field] = req.body[field];
+    }
+  }
     const video = await Videos.findOneAndUpdate(
       { id: req.params.id },
       req.body,
@@ -53,7 +73,15 @@ const updateVideo = catchAsync(async (req, res, next) => {
 });
 
 const deleteVideo = catchAsync(async (req, res, next) => {
-    const video = await Videos.findOneAndDelete({ id: req.params.id });
+  if (!req.user) {
+    return next(new AppError("Debe iniciar sesion", 401));
+  }
+  if (req.user.rol !== "Administrador") {
+    return next(new AppError("No autorizado", 403));
+  }
+    const video = await Videos.findOneAndUpdate({ id: req.params.id },
+      { available: false },
+      { new: true });
     if (!video) {
       return next(new AppError("No se encontro el video", 404));
     }
