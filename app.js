@@ -3,6 +3,9 @@ const express = require("express");
 const { connect } = require("mongoose");
 const morgan = require("morgan");
 const videoRouter = require("./src/modules/videos/routers/videoRouter");
+const usersRouter = require("./src/modules/users/routers/usersRouter");
+const authRouter = require("./src/modules/auth/routers/authRouter");
+const billRouter = require("./src/modules/bills/routers/billRouter");
 const globalErrorMiddleware = require("./src/middlewares/globalErrorMiddleware");
 
 config({ path: ".env" });
@@ -26,7 +29,10 @@ app.get("/", (req, res) =>{
     res.status(200).send("OK");
 });
 
+app.use("/auth", authRouter);
+app.use("/bills", billRouter);
 app.use("/videos", videoRouter);
+app.use("/users", usersRouter);
 
 app.use(globalErrorMiddleware);
 
