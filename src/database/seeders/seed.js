@@ -11,6 +11,29 @@ const billsPrisma = new BillsClient();
 async function seedUsers() {
   const users = [];
 
+  const fixedUsers = [
+    {
+      name: "Among",
+      lastName: "Us",
+      email: "GOTY@example.com",
+      password: await bcrypt.hash("admin", 12),
+      rol: "Administrador",
+      createdAt: new Date(),
+      deletedAt: null,
+    },
+    {
+      name: "Pepe",
+      lastName: "Tapia",
+      email: "cliente@example.com",
+      password: await bcrypt.hash("cliente", 12),
+      rol: "Cliente",
+      createdAt: new Date(),
+      deletedAt: null,
+    },
+  ];
+
+  users.push(...fixedUsers);
+
   for (let i = 0; i < 100; i++) {
     const password = await bcrypt.hash("password", 12);
     const isDeleted = faker.datatype.boolean({ probability: 0.1 });
